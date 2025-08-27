@@ -1,0 +1,463 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "version": "3.0.3",
+    "title": "AWS S3",
+    "description": "Amazon S3 operations. Use Basic Auth with AWS Access Key ID as username and Secret Access Key as password."
+  },
+  "host": "<your-function-id>.lambda-url.<region>.on.aws",
+  "basePath": "/",
+  "schemes": ["https"],
+  "consumes": ["application/json"],
+  "produces": ["application/json"],
+  "securityDefinitions": {
+    "AWSCredentials": {
+      "type": "basic",
+      "description": "AWS Access Key ID as Username and AWS Secret Access Key as Password"
+    }
+  },
+  "security": [{ "AWSCredentials": [] }],
+  "paths": {
+    "/amazon-s3-upload": {
+      "post": {
+        "summary": "Amazon S3 Upload",
+        "tags": ["Amazon S3"],
+        "operationId": "AmazonS3Upload",
+        "parameters": [
+          {
+            "name": "uploadRequest",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "required": ["bucketName", "fileName", "fileContent"],
+              "properties": {
+                "bucketName": { "type": "string", "x-ntx-summary": "Bucket Name" },
+                "fileName": { "type": "string", "x-ntx-summary": "File Name/Key" },
+                "fileContent": { "type": "string", "format": "byte", "x-ntx-summary": "File Content (Base64)" },
+                "contentType": { "type": "string", "default": "application/octet-stream", "x-ntx-summary": "Content Type" },
+                "metadata": { "type": "object", "additionalProperties": { "type": "string" }, "x-ntx-summary": "Metadata (key:value)" },
+                "tags": { "type": "object", "additionalProperties": { "type": "string" }, "x-ntx-summary": "Object Tags (key:value)" },
+                "region": { "type": "string", "x-ntx-summary": "AWS Region (optional)" }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": { "description": "File uploaded", "schema": { "$ref": "#/definitions/UploadResponse" } },
+          "default": { "description": "Error", "schema": { "$ref": "#/definitions/ErrorResponse" } }
+        }
+      }
+    },
+    "/create-bucket": {
+      "post": {
+        "summary": "Create Bucket",
+        "tags": ["Amazon S3"],
+        "operationId": "CreateBucket",
+        "parameters": [
+          {
+            "name": "createBucketRequest",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "required": ["bucketName"],
+              "properties": {
+                "bucketName": { "type": "string", "x-ntx-summary": "Bucket Name" },
+                "region": { "type": "string", "x-ntx-summary": "AWS Region (optional)" },
+                "versioning": { "type": "boolean", "x-ntx-summary": "Enable Versioning? (optional)" },
+                "publicAccess": { "type": "boolean", "x-ntx-summary": "Public Access? (optional)" }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": { "description": "Bucket created", "schema": { "$ref": "#/definitions/BucketResponse" } },
+          "default": { "description": "Error", "schema": { "$ref": "#/definitions/ErrorResponse" } }
+        }
+      }
+    },
+    "/create-folder": {
+      "post": {
+        "summary": "Create Folder",
+        "tags": ["Amazon S3"],
+        "operationId": "CreateFolder",
+        "parameters": [
+          {
+            "name": "createFolderRequest",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "required": ["bucketName", "folderName"],
+              "properties": {
+                "bucketName": { "type": "string", "x-ntx-summary": "Bucket Name" },
+                "folderName": { "type": "string", "x-ntx-summary": "Folder Path (prefix)" },
+                "region": { "type": "string", "x-ntx-summary": "AWS Region (optional)" }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": { "description": "Folder created", "schema": { "$ref": "#/definitions/FolderResponse" } },
+          "default": { "description": "Error", "schema": { "$ref": "#/definitions/ErrorResponse" } }
+        }
+      }
+    },
+    "/create-object": {
+      "post": {
+        "summary": "Create Object",
+        "tags": ["Amazon S3"],
+        "operationId": "CreateObject",
+        "parameters": [
+          {
+            "name": "createObjectRequest",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "required": ["bucketName", "objectKey"],
+              "properties": {
+                "bucketName": { "type": "string", "x-ntx-summary": "Bucket Name" },
+                "objectKey": { "type": "string", "x-ntx-summary": "Object Key" },
+                "content": { "type": "string", "x-ntx-summary": "Content (UTF-8 or Base64)" },
+                "encoding": { "type": "string", "enum": ["utf8", "base64"], "x-ntx-summary": "Encoding (default utf8)" },
+                "contentType": { "type": "string", "default": "text/plain", "x-ntx-summary": "Content Type" },
+                "region": { "type": "string", "x-ntx-summary": "AWS Region (optional)" }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": { "description": "Object created", "schema": { "$ref": "#/definitions/ObjectResponse" } },
+          "default": { "description": "Error", "schema": { "$ref": "#/definitions/ErrorResponse" } }
+        }
+      }
+    },
+    "/delete-file": {
+      "post": {
+        "summary": "Delete File",
+        "tags": ["Amazon S3"],
+        "operationId": "DeleteFile",
+        "parameters": [
+          {
+            "name": "deleteFileRequest",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "required": ["bucketName", "fileName"],
+              "properties": {
+                "bucketName": { "type": "string", "x-ntx-summary": "Bucket Name" },
+                "fileName": { "type": "string", "x-ntx-summary": "File Key" },
+                "region": { "type": "string", "x-ntx-summary": "AWS Region (optional)" }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": { "description": "File deleted", "schema": { "$ref": "#/definitions/DeleteResponse" } },
+          "default": { "description": "Error", "schema": { "$ref": "#/definitions/ErrorResponse" } }
+        }
+      }
+    },
+    "/delete-folder": {
+      "post": {
+        "summary": "Delete Folder",
+        "tags": ["Amazon S3"],
+        "operationId": "DeleteFolder",
+        "parameters": [
+          {
+            "name": "deleteFolderRequest",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "required": ["bucketName", "folderName"],
+              "properties": {
+                "bucketName": { "type": "string", "x-ntx-summary": "Bucket Name" },
+                "folderName": { "type": "string", "x-ntx-summary": "Folder Path (prefix)" },
+                "force": { "type": "boolean", "default": false, "x-ntx-summary": "Force delete non-empty?" },
+                "region": { "type": "string", "x-ntx-summary": "AWS Region (optional)" }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": { "description": "Folder deleted", "schema": { "$ref": "#/definitions/DeleteFolderResponse" } },
+          "default": { "description": "Error", "schema": { "$ref": "#/definitions/ErrorResponse" } }
+        }
+      }
+    },
+    "/get-object": {
+      "post": {
+        "summary": "Get Object",
+        "tags": ["Amazon S3"],
+        "operationId": "GetObject",
+        "parameters": [
+          {
+            "name": "getObjectRequest",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "required": ["bucketName", "objectKey"],
+              "properties": {
+                "bucketName": { "type": "string", "x-ntx-summary": "Bucket Name" },
+                "objectKey": { "type": "string", "x-ntx-summary": "Object Key" },
+                "downloadUrl": { "type": "boolean", "default": false, "x-ntx-summary": "Return Presigned URL?" },
+                "encoding": { "type": "string", "enum": ["base64", "utf8"], "x-ntx-summary": "Return encoding (for content)" },
+                "region": { "type": "string", "x-ntx-summary": "AWS Region (optional)" }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": { "description": "Object retrieved", "schema": { "$ref": "#/definitions/GetObjectResponse" } },
+          "default": { "description": "Error", "schema": { "$ref": "#/definitions/ErrorResponse" } }
+        }
+      }
+    },
+    "/list-buckets": {
+      "post": {
+        "summary": "List Buckets",
+        "tags": ["Amazon S3"],
+        "operationId": "ListBuckets",
+        "parameters": [
+          {
+            "name": "listBucketsRequest",
+            "in": "body",
+            "required": false,
+            "schema": {
+              "type": "object",
+              "properties": {
+                "region": { "type": "string", "x-ntx-summary": "AWS Region (optional)" }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": { "description": "Buckets listed", "schema": { "$ref": "#/definitions/ListBucketsResponse" } },
+          "default": { "description": "Error", "schema": { "$ref": "#/definitions/ErrorResponse" } }
+        }
+      }
+    },
+    "/list-files": {
+      "post": {
+        "summary": "List Files",
+        "tags": ["Amazon S3"],
+        "operationId": "ListFiles",
+        "parameters": [
+          {
+            "name": "listFilesRequest",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "required": ["bucketName"],
+              "properties": {
+                "bucketName": { "type": "string", "x-ntx-summary": "Bucket Name" },
+                "prefix": { "type": "string", "x-ntx-summary": "Prefix filter (e.g. folder/)" },
+                "maxKeys": { "type": "integer", "default": 1000, "x-ntx-summary": "Max Keys" },
+                "continuationToken": { "type": "string", "x-ntx-summary": "Continuation Token" },
+                "region": { "type": "string", "x-ntx-summary": "AWS Region (optional)" }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": { "description": "Files listed", "schema": { "$ref": "#/definitions/ListFilesResponse" } },
+          "default": { "description": "Error", "schema": { "$ref": "#/definitions/ErrorResponse" } }
+        }
+      }
+    },
+    "/list-folder-contents": {
+      "post": {
+        "summary": "List Folder Contents",
+        "tags": ["Amazon S3"],
+        "operationId": "ListFolderContents",
+        "parameters": [
+          {
+            "name": "listFolderRequest",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "required": ["bucketName"],
+              "properties": {
+                "bucketName": { "type": "string", "x-ntx-summary": "Bucket Name" },
+                "folderPath": { "type": "string", "x-ntx-summary": "Folder Path (prefix)" },
+                "includeSubfolders": { "type": "boolean", "default": false, "x-ntx-summary": "Include subfolders?" },
+                "region": { "type": "string", "x-ntx-summary": "AWS Region (optional)" }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": { "description": "Folder listed", "schema": { "$ref": "#/definitions/FolderContentsResponse" } },
+          "default": { "description": "Error", "schema": { "$ref": "#/definitions/ErrorResponse" } }
+        }
+      }
+    }
+  },
+  "definitions": {
+    "UploadResponse": {
+      "type": "object",
+      "properties": {
+        "message": { "type": "string" },
+        "fileUrl": { "type": "string" },
+        "fileName": { "type": "string" },
+        "bucketName": { "type": "string" },
+        "fileSize": { "type": "integer" },
+        "etag": { "type": "string" },
+        "versionId": { "type": "string" },
+        "uploadTimestamp": { "type": "string", "format": "date-time" },
+        "requestId": { "type": "string" }
+      }
+    },
+    "BucketResponse": {
+      "type": "object",
+      "properties": {
+        "message": { "type": "string" },
+        "bucketName": { "type": "string" },
+        "region": { "type": "string" },
+        "versioning": { "type": "boolean" },
+        "publicAccess": { "type": "boolean" },
+        "createdAt": { "type": "string", "format": "date-time" },
+        "requestId": { "type": "string" }
+      }
+    },
+    "FolderResponse": {
+      "type": "object",
+      "properties": {
+        "message": { "type": "string" },
+        "folderName": { "type": "string" },
+        "bucketName": { "type": "string" },
+        "createdAt": { "type": "string", "format": "date-time" },
+        "requestId": { "type": "string" }
+      }
+    },
+    "ObjectResponse": {
+      "type": "object",
+      "properties": {
+        "message": { "type": "string" },
+        "objectKey": { "type": "string" },
+        "bucketName": { "type": "string" },
+        "contentType": { "type": "string" },
+        "size": { "type": "integer" },
+        "etag": { "type": "string" },
+        "createdAt": { "type": "string", "format": "date-time" },
+        "requestId": { "type": "string" }
+      }
+    },
+    "DeleteResponse": {
+      "type": "object",
+      "properties": {
+        "message": { "type": "string" },
+        "deletedItem": { "type": "string" },
+        "bucketName": { "type": "string" },
+        "versionId": { "type": "string" },
+        "deletedAt": { "type": "string", "format": "date-time" },
+        "requestId": { "type": "string" }
+      }
+    },
+    "DeleteFolderResponse": {
+      "type": "object",
+      "properties": {
+        "message": { "type": "string" },
+        "deletedItem": { "type": "string" },
+        "bucketName": { "type": "string" },
+        "deletedObjects": { "type": "integer" },
+        "deletedAt": { "type": "string", "format": "date-time" },
+        "requestId": { "type": "string" }
+      }
+    },
+    "GetObjectResponse": {
+      "type": "object",
+      "properties": {
+        "message": { "type": "string" },
+        "objectKey": { "type": "string" },
+        "content": { "type": "string", "description": "Present if downloadUrl=false" },
+        "encoding": { "type": "string" },
+        "downloadUrl": { "type": "string", "description": "Present if downloadUrl=true" },
+        "contentType": { "type": "string" },
+        "size": { "type": "integer" },
+        "lastModified": { "type": "string", "format": "date-time" },
+        "etag": { "type": "string" },
+        "expiresIn": { "type": "integer" },
+        "requestId": { "type": "string" }
+      }
+    },
+    "ListBucketsResponse": {
+      "type": "object",
+      "properties": {
+        "message": { "type": "string" },
+        "buckets": { "type": "array", "items": { "$ref": "#/definitions/S3Bucket" } },
+        "count": { "type": "integer" },
+        "requestId": { "type": "string" }
+      }
+    },
+    "ListFilesResponse": {
+      "type": "object",
+      "properties": {
+        "message": { "type": "string" },
+        "files": { "type": "array", "items": { "$ref": "#/definitions/S3File" } },
+        "bucketName": { "type": "string" },
+        "count": { "type": "integer" },
+        "isTruncated": { "type": "boolean" },
+        "nextContinuationToken": { "type": "string" },
+        "requestId": { "type": "string" }
+      }
+    },
+    "FolderContentsResponse": {
+      "type": "object",
+      "properties": {
+        "message": { "type": "string" },
+        "path": { "type": "string" },
+        "folders": { "type": "array", "items": { "$ref": "#/definitions/S3Folder" } },
+        "files": { "type": "array", "items": { "$ref": "#/definitions/S3File" } },
+        "totalItems": { "type": "integer" },
+        "requestId": { "type": "string" }
+      }
+    },
+    "S3Bucket": {
+      "type": "object",
+      "properties": {
+        "name": { "type": "string" },
+        "creationDate": { "type": "string", "format": "date-time" }
+      }
+    },
+    "S3File": {
+      "type": "object",
+      "properties": {
+        "key": { "type": "string" },
+        "name": { "type": "string" },
+        "lastModified": { "type": "string", "format": "date-time" },
+        "size": { "type": "integer" },
+        "storageClass": { "type": "string" },
+        "etag": { "type": "string" }
+      }
+    },
+    "S3Folder": {
+      "type": "object",
+      "properties": {
+        "name": { "type": "string" },
+        "fullPath": { "type": "string" },
+        "type": { "type": "string" }
+      }
+    },
+    "ErrorResponse": {
+      "type": "object",
+      "properties": {
+        "error": { "type": "string" },
+        "code": { "type": "string" },
+        "requestId": { "type": "string" },
+        "timestamp": { "type": "string", "format": "date-time" }
+      }
+    }
+  },
+  "tags": [
+    { "name": "Amazon S3", "description": "Amazon S3 operations via Lambda" }
+  ],
+  "x-ntx-contract-id": "f4094adb-2acd-6d30-bea1-2c24c2b29f01"
+}
