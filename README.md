@@ -1,4 +1,4 @@
-# AWS S3 Lambda + Nintex Xtension — Customer Wiki
+# AWS S3 Lambda + Nintex Xtension — Setup and Information
 
 This guide explains how to use our **AWS S3 Lambda API** together with a **Nintex Workflow (NW) Xtension** to upload, download, list, and manage files in Amazon S3.
 
