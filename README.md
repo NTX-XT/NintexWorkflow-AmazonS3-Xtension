@@ -2,6 +2,10 @@
 
 This guide explains how to use our **AWS S3 Lambda API** together with a **Nintex Workflow (NW) Xtension** to upload, download, list, and manage files in Amazon S3.
 
+You can also check out my video guide here:
+
+<insert link>
+
 **TL;DR**  
 • Endpoint host: **&lt;your-function-id&gt;.lambda-url.&lt;region&gt;.on.aws** (Lambda Function URL)  
 • Base path: **/**  
