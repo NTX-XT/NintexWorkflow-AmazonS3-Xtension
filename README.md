@@ -49,6 +49,9 @@ Nintex Workflow → Xtension (Swagger) → Lambda Function URL → AWS SDK v3 �
 
 ### 2.3 Function URL
 
+<img width="1056" height="1261" alt="{38317983-19BF-4A30-B067-61CEFEB976EA}" src="https://github.com/user-attachments/assets/86851901-ddac-4748-a8fb-d93888af1044" />
+
+
 - Create a **Function URL** for the Lambda (Auth type: **NONE**).  
 
 - The Lambda itself authenticates calls via the **Authorization** header (HTTP Basic) and then signs S3 requests with those credentials.
