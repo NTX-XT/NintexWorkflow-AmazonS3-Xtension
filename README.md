@@ -26,7 +26,6 @@ Nintex Workflow → Xtension (Swagger) → Lambda Function URL → AWS SDK v3 �
 
 ## 2) Deploy & Configure the Lambda Function
 
-<img width="1056" height="1261" alt="{38317983-19BF-4A30-B067-61CEFEB976EA}" src="https://github.com/user-attachments/assets/86851901-ddac-4748-a8fb-d93888af1044" />
 
 ### 2.1 Runtime & Dependencies
 
